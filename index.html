@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CYCLING × TECH HACKATHON</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Klee+One:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Klee One', cursive;
+      background-color: #fdfdfd;
+      background-image: 
+        radial-gradient(#e5e7eb 1px, transparent 1px),
+        radial-gradient(#e5e7eb 1px, transparent 1px);
+      background-size: 40px 40px;
+      background-position: 0 0, 20px 20px;
+      color: #1f2937;
+      overflow-x: hidden;
+      margin: 0;
+    }
+
+    .font-eng {
+      font-family: 'Caveat', cursive;
+      font-size: 1.15em;
+    }
+
+    .border-rough {
+      border: 2px solid #374151;
+      border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+    }
+
+    @keyframes spin-slow {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes spin-slow-reverse {
+      from { transform: rotate(360deg); }
+      to { transform: rotate(0deg); }
+    }
+
+    .animate-spin-slow {
+      animation: spin-slow 80s linear infinite;
+    }
+
+    .animate-spin-slow-reverse {
+      animation: spin-slow-reverse 100s linear infinite;
+    }
+
+    .modal-enter {
+      animation: modalFadeIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    @keyframes modalFadeIn {
+      from { opacity: 0; transform: translateY(30px) scale(0.9) rotate(-2deg); }
+      to { opacity: 1; transform: translateY(0) scale(1) rotate(0deg); }
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+
+    /* JavaScriptによる表示制御用 */
+    .view-hidden {
+      display: none !important;
+    }
+    
+    /* マーカーアニメーション用 */
+    .marker-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+      transition: stroke-dashoffset cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .marker-path.drawn {
+      stroke-dashoffset: 0;
+    }
+
+    /* フェードインアニメーション用 */
+    .fade-in-scroll {
+      opacity: 0;
+      transform: translateY(4rem);
+      transition: opacity 700ms cubic-bezier(0.34, 1.56, 0.64, 1), transform 700ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .fade-in-scroll.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ロゴアニメーション用 */
+    .logo-sticker {
+      opacity: 0;
+      transform: scale(1.25) rotate(-12deg) translateY(2.5rem);
+      transition: all 700ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .logo-sticker.visible {
+      opacity: 1;
+      transform: scale(1) rotate(2deg) translateY(0);
+    }
+  </style>
+</head>
+<body class="selection:bg-yellow-200 selection:text-gray-900 pb-20">
+
+  <!-- HOME VIEW -->
+  <div id="homeView" class="relative min-h-[100dvh] flex flex-col items-center justify-center px-4 py-20 w-full overflow-hidden">
+    
+    <!-- 背景の写真 -->
+    <div class="absolute top-[40%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] md:w-[1200px] md:h-[1200px] animate-spin-slow pointer-events-none z-0 opacity-60">
+      <svg class="absolute inset-0 w-full h-full opacity-20" viewBox="0 0 100 100" preserveAspectRatio="none">
+        <path d="M 50,2 C 80,4 96,25 98,50 C 99,80 75,98 50,98 C 20,97 2,75 2,50 C 3,20 25,4 45,2" fill="none" stroke="#374151" stroke-width="0.5" stroke-dasharray="2,2"/>
+      </svg>
+      <div id="rotatingPhotosContainer"></div>
+    </div>
+    
+    <div class="relative z-10 w-full max-w-4xl flex flex-col items-center">
+      
+      <!-- タイトル -->
+      <div class="text-center mb-16 md:mb-32 mt-10 flex flex-col items-center w-full max-w-[100vw] overflow-visible">
+        <div class="inline-block relative mb-6">
+          <h1 class="font-eng text-[5.5rem] md:text-[12rem] font-bold text-gray-900 leading-none relative z-10 text-center tracking-tighter" style="transform: rotate(-2deg)">
+            CYCLING <span class="text-gray-400 font-light mx-1 md:mx-4">×</span> TECH
+            <br />
+            <span class="relative inline-block mt-4 md:mt-8">
+              HACKATHON
+              <svg class="absolute inset-0 w-[120%] h-[120%] -left-[10%] -top-[10%] pointer-events-none overflow-visible" viewBox="0 0 100 100" preserveAspectRatio="none">
+                <path class="marker-path" d="M 50,5 C 80,5 95,30 95,50 C 95,80 80,95 50,95 C 20,95 5,80 5,50 C 5,20 20,5 55,2" fill="none" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round" stroke-opacity="0.5" pathLength="1" style="transition-delay: 0.5s;"/>
+              </svg>
+            </span>
+          </h1>
+          <svg class="absolute -bottom-1 left-0 w-full h-4 pointer-events-none overflow-visible" preserveAspectRatio="none" viewBox="0 0 100 10">
+            <path class="marker-path" d="M 0 5 Q 50 8 100 2" fill="none" stroke="#3b82f6" stroke-width="10" stroke-linecap="round" stroke-opacity="0.4" pathLength="1" style="transition-delay: 0.2s;"/>
+          </svg>
+        </div>
+        
+        <p class="mt-6 md:mt-10 text-sm md:text-xl font-bold text-gray-600 relative inline-block text-center" style="transform: rotate(2deg)">
+          主催：石川県・金沢市
+          <svg class="absolute -bottom-1 left-0 w-full h-4 pointer-events-none overflow-visible" preserveAspectRatio="none" viewBox="0 0 100 10">
+            <path class="marker-path" d="M 0 5 Q 50 8 100 2" fill="none" stroke="#22c55e" stroke-width="3" stroke-linecap="round" stroke-opacity="0.5" pathLength="1" style="transition-delay: 0.8s;"/>
+          </svg>
+        </p>
+
+        <!-- ペタッと張るロゴ -->
+        <div class="logo-sticker mt-14 relative" style="transition-delay: 0.8s;">
+          <div class="absolute -top-4 left-1/2 -translate-x-1/2 w-16 h-6 bg-yellow-300/60 rotate-[-4deg] backdrop-blur-sm shadow-sm z-10"></div>
+          <div class="w-48 h-48 md:w-56 md:h-56 bg-white p-2 shadow-lg border border-gray-200">
+             <img src="./images/logo.png" alt="Logo Placeholder" class="w-full h-full object-cover grayscale sepia-[.15] contrast-[1.1]" />
+          </div>
+          <svg class="absolute -bottom-12 left-1/2 -translate-x-1/2 w-12 h-16 pointer-events-none overflow-visible" viewBox="0 0 50 100">
+            <path class="marker-path" d="M 25 0 Q 30 50 20 90 M 10 70 L 20 95 L 40 80" fill="none" stroke="#9ca3af" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.6" pathLength="1" style="transition-delay: 1.2s;"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- メニューカード群 -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 w-full px-4 md:px-10 mt-10 relative">
+        
+        <!-- Day 1 Paper -->
+        <div onclick="switchView('day1')" class="cursor-pointer relative bg-white p-6 shadow-[2px_4px_12px_rgba(0,0,0,0.08)] border border-gray-200 -rotate-2 hover:-translate-y-1 hover:shadow-[4px_8px_16px_rgba(0,0,0,0.12)] transition-all duration-300 group md:h-72 flex flex-col justify-between" style="border-radius: 2px 4px 3px 2px">
+          <div class="absolute -top-3 left-1/2 -translate-x-1/2 w-6 h-6 rounded-full shadow-[1px_2px_3px_rgba(0,0,0,0.2)] bg-red-500 border-2 border-white z-10 flex items-center justify-center">
+             <div class="w-1.5 h-1.5 rounded-full bg-white opacity-40 absolute top-1 left-1"></div>
+          </div>
+          <div>
+            <div class="flex items-start justify-between mb-4">
+              <span class="font-eng text-6xl font-bold text-red-500">1</span>
+              <div class="text-right">
+                <span class="font-eng text-xl font-bold text-gray-500 underline decoration-wavy decoration-gray-300 block">DAY ONE</span>
+                <span class="text-base font-bold text-gray-600 block mt-2" style="transform: rotate(2deg)">2026/7/4(土)</span>
+              </div>
+            </div>
+            <h2 class="font-eng text-3xl font-bold mb-2 text-gray-800">INPUT & IDEATHON</h2>
+            <p class="text-base font-bold text-gray-600 mb-6">インプット ＆ アイデアソン</p>
+          </div>
+          <div class="text-right">
+            <span class="font-eng text-2xl font-bold text-gray-400 group-hover:text-red-500 transition-colors">See details →</span>
+          </div>
+        </div>
+
+        <!-- Day 2 Paper -->
+        <div onclick="switchView('day2')" class="cursor-pointer relative bg-white p-6 shadow-[2px_4px_12px_rgba(0,0,0,0.08)] border border-gray-200 rotate-3 hover:-translate-y-1 hover:shadow-[4px_8px_16px_rgba(0,0,0,0.12)] transition-all duration-300 group md:h-72 flex flex-col justify-between mt-8 md:mt-0" style="border-radius: 2px 4px 3px 2px">
+          <div class="absolute -top-3 left-1/2 -translate-x-1/2 w-6 h-6 rounded-full shadow-[1px_2px_3px_rgba(0,0,0,0.2)] bg-blue-500 border-2 border-white z-10 flex items-center justify-center">
+             <div class="w-1.5 h-1.5 rounded-full bg-white opacity-40 absolute top-1 left-1"></div>
+          </div>
+          <div>
+            <div class="flex items-start justify-between mb-4">
+              <span class="font-eng text-6xl font-bold text-blue-600">2</span>
+              <div class="text-right">
+                <span class="font-eng text-xl font-bold text-gray-500 underline decoration-wavy decoration-gray-300 block">DAY TWO</span>
+                <span class="text-base font-bold text-gray-600 block mt-2" style="transform: rotate(-2deg)">2026/9月予定</span>
+              </div>
+            </div>
+            <h2 class="font-eng text-3xl font-bold mb-2 text-gray-800">PROTOTYPING & PITCH</h2>
+            <p class="text-base font-bold text-gray-600 mb-6">プロトタイピング ＆ 最終ピッチ</p>
+          </div>
+          <div class="text-right">
+            <span class="font-eng text-2xl font-bold text-gray-400 group-hover:text-blue-500 transition-colors">See details →</span>
+          </div>
+        </div>
+
+        <!-- About Card -->
+        <div class="md:col-span-2 mt-4 md:mt-2">
+          <div onclick="openModal('aboutModal')" class="cursor-pointer relative bg-white p-6 shadow-[2px_4px_12px_rgba(0,0,0,0.08)] border border-gray-200 -rotate-1 hover:-translate-y-2 hover:shadow-[4px_8px_16px_rgba(0,0,0,0.12)] transition-all duration-300 group flex flex-col justify-between" style="border-radius: 2px 4px 3px 2px">
+            <div class="absolute -top-3 left-1/2 -translate-x-1/2 w-6 h-6 rounded-full shadow-[1px_2px_3px_rgba(0,0,0,0.2)] bg-yellow-400 border-2 border-white z-10 flex items-center justify-center">
+               <div class="w-1.5 h-1.5 rounded-full bg-white opacity-40 absolute top-1 left-1"></div>
+            </div>
+            <div class="flex flex-col md:flex-row justify-between mb-4">
+              <div class="flex-grow">
+                <div class="flex items-start justify-between mb-4">
+                  <span class="font-eng text-6xl font-bold text-yellow-500">?</span>
+                  <div class="text-right">
+                    <span class="font-eng text-xl font-bold text-gray-500 underline decoration-wavy decoration-gray-300 block">ABOUT</span>
+                    <span class="text-base font-bold text-gray-600 block mt-2" style="transform: rotate(1deg)">Concept & Message</span>
+                  </div>
+                </div>
+                <h2 class="font-eng text-3xl font-bold mb-2 text-gray-800">Cycling × TECH</h2>
+                <p class="text-base font-bold text-gray-600">ハッカソンに期待すること・背景知識</p>
+              </div>
+            </div>
+            <div class="text-right mt-4 md:mt-0">
+              <span class="font-eng text-2xl font-bold text-gray-400 group-hover:text-yellow-500 transition-colors">Read message →</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 雑多な付箋エリア -->
+        <div class="md:col-span-2 mt-4 flex flex-wrap justify-center md:justify-end gap-6 md:gap-10 md:pr-10">
+          <a href="#" onclick="event.preventDefault()" class="group relative w-36 h-36 md:w-44 md:h-44 p-4 shadow-md hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 bg-[#fef08a] flex flex-col justify-between" style="transform: rotate(4deg); box-shadow: 2px 4px 10px rgba(0,0,0,0.1), inset 0 -4px 6px rgba(0,0,0,0.04); border-radius: 2px 255px 3px 255px / 255px 5px 225px 3px">
+            <div class="absolute bottom-0 right-0 w-8 h-8 bg-black opacity-5 rounded-tl-full transition-transform group-hover:scale-110"></div>
+            <div>
+              <h3 class="font-eng text-2xl font-bold text-gray-700 mb-2 border-b-2 border-dotted border-gray-400 pb-1 inline-block">Contact</h3>
+              <p class="font-bold text-gray-800 text-sm leading-relaxed mt-2">ご不明な点は<br/>こちらまで</p>
+            </div>
+            <div class="text-right">
+              <span class="font-eng text-lg text-gray-500">Mail ↗</span>
+            </div>
+          </a>
+
+          <a href="#" onclick="event.preventDefault()" class="group relative w-36 h-36 md:w-44 md:h-44 p-4 shadow-md hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 bg-[#fbcfe8] flex flex-col justify-between" style="transform: rotate(-5deg); box-shadow: 2px 4px 10px rgba(0,0,0,0.1), inset 0 -4px 6px rgba(0,0,0,0.04); border-radius: 2px 255px 3px 255px / 255px 5px 225px 3px">
+            <div class="absolute bottom-0 right-0 w-8 h-8 bg-black opacity-5 rounded-tl-full transition-transform group-hover:scale-110"></div>
+            <div>
+              <h3 class="font-eng text-2xl font-bold text-gray-700 mb-2 border-b-2 border-dotted border-gray-400 pb-1 inline-block">Q&A</h3>
+              <p class="font-bold text-gray-800 text-sm leading-relaxed mt-2">事前質問<br/>受付フォーム</p>
+            </div>
+            <div class="text-right">
+              <span class="font-eng text-lg text-gray-500">Link ↗</span>
+            </div>
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- DAY VIEW CONTAINER -->
+  <div id="dayView" class="view-hidden min-h-[100dvh] pb-32 relative w-full">
+    <div class="max-w-4xl mx-auto px-4 pt-12 md:pt-16 relative z-10">
+      
+      <!-- Back Button -->
+      <button onclick="switchView('home')" class="group flex items-center gap-2 mb-10">
+        <span class="font-eng text-4xl text-gray-500 group-hover:text-gray-900 transition-colors">←</span>
+        <span class="font-eng text-2xl font-bold text-gray-500 group-hover:text-gray-900 border-b-2 border-transparent group-hover:border-gray-900 transition-all">Back to Home</span>
+      </button>
+
+      <!-- Title Section -->
+      <div class="mb-20 mt-8 relative inline-block">
+        <div class="flex flex-col md:flex-row md:items-baseline gap-2 md:gap-6 mb-2">
+          <p id="dvId" class="font-eng text-3xl font-bold"></p>
+          <p id="dvDate" class="text-2xl font-bold text-gray-600 underline decoration-gray-300 decoration-wavy" style="transform: rotate(-1deg)"></p>
+        </div>
+        <h2 id="dvTitle" class="font-eng text-5xl md:text-7xl font-bold text-gray-900 mb-4 relative z-10"></h2>
+        <svg class="absolute -bottom-1 left-0 w-full h-4 pointer-events-none overflow-visible" preserveAspectRatio="none" viewBox="0 0 100 10">
+          <path id="dvUnderline" class="marker-path" d="M 0 5 Q 50 8 100 2" fill="none" stroke-width="8" stroke-linecap="round" stroke-opacity="0.5" pathLength="1" style="transition-delay: 0.2s;"/>
+        </svg>
+        <p id="dvSubtitle" class="text-xl md:text-2xl font-bold text-gray-700 mt-6 ml-4"></p>
+      </div>
+
+      <!-- Timetable -->
+      <section class="mb-24 relative">
+        <div class="inline-block relative mb-12">
+          <h3 class="font-eng text-4xl font-bold text-gray-900 z-10 relative">Timetable</h3>
+          <svg class="absolute inset-0 w-[120%] h-[120%] -left-[10%] -top-[10%] pointer-events-none overflow-visible" viewBox="0 0 100 100" preserveAspectRatio="none">
+            <path class="marker-path" d="M 50,5 C 80,5 95,30 95,50 C 95,80 80,95 50,95 C 20,95 5,80 5,50 C 5,20 20,5 55,2" fill="none" stroke="#eab308" stroke-width="2.5" stroke-linecap="round" stroke-opacity="0.5" pathLength="1" style="transition-delay: 0.5s;"/>
+          </svg>
+        </div>
+        
+        <div class="relative pl-4 md:pl-12" id="dvTimetable">
+          <div class="absolute top-4 bottom-0 left-[24px] md:left-[56px] w-[3px] bg-gray-300 rounded-full"></div>
+          <!-- Programs will be injected here -->
+        </div>
+      </section>
+
+      <!-- Presentations (Day 2 only) -->
+      <section id="dvPresentationsSection" class="mb-24 view-hidden">
+        <div class="inline-block relative mb-12">
+          <h3 class="font-eng text-4xl font-bold text-gray-900 z-10 relative">Presentations</h3>
+          <svg class="absolute -bottom-1 left-0 w-full h-4 pointer-events-none overflow-visible" preserveAspectRatio="none" viewBox="0 0 100 10">
+            <path class="marker-path" d="M 0 5 Q 50 8 100 2" fill="none" stroke="#22c55e" stroke-width="5" stroke-linecap="round" stroke-opacity="0.5" pathLength="1" style="transition-delay: 0.3s;"/>
+          </svg>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-10 pl-2" id="dvPresentations">
+          <!-- Teams will be injected here -->
+        </div>
+      </section>
+
+      <!-- Tips -->
+      <section>
+        <div class="inline-block relative mb-12 mt-4">
+          <h3 class="font-eng text-4xl font-bold text-gray-900 z-10 relative">Tips</h3>
+          <svg class="absolute inset-0 w-[120%] h-[120%] -left-[10%] -top-[10%] pointer-events-none overflow-visible" viewBox="0 0 100 100" preserveAspectRatio="none">
+            <path class="marker-path" d="M 50,5 C 80,5 95,30 95,50 C 95,80 80,95 50,95 C 20,95 5,80 5,50 C 5,20 20,5 55,2" fill="none" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round" stroke-opacity="0.5" pathLength="1" style="transition-delay: 0.4s;"/>
+          </svg>
+        </div>
+        <div class="flex flex-wrap gap-6 md:gap-10 pl-2 justify-center md:justify-start" id="dvTips">
+          <!-- Tips will be injected here -->
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <!-- MODALS -->
+  <!-- About Modal -->
+  <div id="aboutModal" class="view-hidden fixed inset-0 z-50 flex items-center justify-center px-4 py-6 md:py-12 bg-gray-900/40 backdrop-blur-sm">
+    <div class="absolute inset-0" onclick="closeModal('aboutModal')"></div>
+    <div class="relative w-full max-w-3xl bg-white shadow-2xl flex flex-col modal-enter border border-gray-300 p-6 md:p-10" style="border-radius: 4px 8px 3px 6px; transform: rotate(-1deg)">
+      <div class="absolute -top-3 left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-yellow-400 shadow-sm border border-yellow-600"></div>
+      <div class="flex items-center justify-between mb-8 border-b-2 border-dashed border-gray-300 pb-4">
+        <div>
+          <span class="font-eng text-2xl font-bold text-gray-500 block mb-1">Message</span>
+          <h3 class="text-2xl md:text-3xl font-bold text-gray-800">Cycling × TECH について</h3>
+        </div>
+        <button onclick="closeModal('aboutModal')" class="group flex items-center justify-center w-10 h-10 rounded-full hover:bg-gray-100 transition-colors">
+          <span class="font-eng text-4xl font-bold text-gray-500 group-hover:text-red-500">×</span>
+        </button>
+      </div>
+      <div class="flex-grow relative text-gray-700 leading-loose text-lg md:text-xl pl-2 md:pl-4">
+        <div class="absolute top-0 bottom-0 left-0 w-1 bg-red-200/50 rounded-full"></div>
+        <p class="mb-6 relative z-10">自転車データを使って、<span class="font-bold border-b-2 border-red-400">石川県の未来の技術を考えるハッカソン</span>。</p>
+        <p class="mb-6 relative z-10">自転車は移動手段だけにとどまらず、交通・まちづくり・健康・エコ・環境問題・安全・観光・スポーツと、様々な分野に発展できる可能性を秘めています。</p>
+        <p class="relative z-10">本イベントでは、単なる自転車の課題解決にとどまらず、そこから広がる石川県の豊かな未来をテクノロジーの力で創り出す、自由で斬新なアイデアをお待ちしています！</p>
+        <div class="mt-12 text-right font-eng text-4xl text-gray-400" style="transform: rotate(-3deg)">Let's Hack!</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Presentation PDF Modal -->
+  <div id="pdfModal" class="view-hidden fixed inset-0 z-50 flex items-center justify-center px-4 py-6 md:py-12 bg-gray-900/20 backdrop-blur-sm">
+    <div class="absolute inset-0" onclick="closeModal('pdfModal')"></div>
+    <div class="relative w-full max-w-4xl h-full md:h-[80vh] bg-white shadow-2xl flex flex-col modal-enter border border-gray-300 p-2" style="border-radius: 4px 8px 3px 6px">
+      <div class="flex items-center justify-between px-6 py-4 border-b-2 border-dashed border-gray-300">
+        <div>
+          <span id="pdfModalTeamId" class="font-eng text-xl font-bold text-gray-500 block"></span>
+          <h3 id="pdfModalTeamTitle" class="text-xl font-bold text-gray-800"></h3>
+        </div>
+        <button onclick="closeModal('pdfModal')" class="group flex items-center justify-center w-10 h-10 rounded-full hover:bg-gray-100 transition-colors">
+          <span class="font-eng text-3xl font-bold text-gray-500 group-hover:text-red-500">×</span>
+        </button>
+      </div>
+      <div class="flex-grow bg-[#fdfdfd] p-4 md:p-8 relative flex items-center justify-center">
+         <div class="w-full h-full border-rough bg-white shadow-sm flex flex-col items-center justify-center text-gray-500 relative">
+            <svg class="absolute inset-0 w-[120%] h-[120%] -left-[10%] -top-[10%] pointer-events-none overflow-visible" viewBox="0 0 100 100" preserveAspectRatio="none">
+              <path class="marker-path drawn" d="M 50,5 C 80,5 95,30 95,50 C 95,80 80,95 50,95 C 20,95 5,80 5,50 C 5,20 20,5 55,2" fill="none" stroke="#3b82f6" stroke-width="2.5" stroke-linecap="round" stroke-opacity="0.5" pathLength="1"/>
+            </svg>
+            <span class="font-eng text-4xl mb-2 text-blue-500">PDF Document</span>
+            <p class="text-lg">Google Drive Viewer Placeholder</p>
+            <p id="pdfModalTeamName" class="text-sm mt-4"></p>
+         </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // --- Data ---
+    const daysData = {
+      day1: {
+        id: "DAY 1", date: "2026/7/4(土)", title: "INPUT & IDEATHON", subtitle: "インプット ＆ アイデアソン",
+        markerColor: "text-red-500", underlineColor: "#ef4444",
+        programs: [
+          { time: "10:00", title: "Opening & Orientation", desc: "ハッカソンの目的、テーマ「Cycling × TECH」、およびルールの説明を行います。" },
+          { time: "11:00", title: "Input Talk Session", desc: "自転車産業の現状、最新のIoT事例、今後のモビリティ社会の展望について専門家が講演します。" },
+          { time: "13:00", title: "Team Building", desc: "ランチを交えながら自己紹介とチーム編成を行います。車座になって円滑なコミュニケーションを。" },
+          { time: "14:00", title: "Ideathon Workshop", desc: "各チームで解決すべきペインポイントを特定し、テクノロジーを用いた解決策のアイデアを発散・収束させます。" },
+          { time: "18:00", title: "Interim Presentation", desc: "Day1のアイデア構想を共有し、メンターや他チームからフィードバックを得ます。" }
+        ],
+        tips: [
+          { text: "自転車産業データセット2026\n(CSV / JSON)", type: "LINK", color: "bg-[#fef08a]" },
+          { text: "海外のモビリティ\nMaaS成功事例まとめ", type: "PDF", color: "bg-[#fbcfe8]" },
+          { text: "提供API\nリファレンスと\n環境構築ガイド", type: "LINK", color: "bg-[#bfdbfe]" }
+        ]
+      },
+      day2: {
+        id: "DAY 2", date: "2026/9月予定", title: "PROTOTYPING & PITCH", subtitle: "プロトタイピング ＆ 最終ピッチ",
+        markerColor: "text-blue-600", underlineColor: "#3b82f6",
+        programs: [
+          { time: "09:00", title: "Venue Open & Dev Start", desc: "朝食を取りながら、各チームでプロトタイピングの役割分担を確認し、開発をスタートします。" },
+          { time: "12:00", title: "Mentoring Session", desc: "エンジニア、デザイナー、ビジネスの専門家が各チームを巡回し、アドバイスを行います。" },
+          { time: "15:00", title: "Development Last Spurt", desc: "プロトタイプのブラッシュアップと、ピッチ資料の作成を並行して進めます。" },
+          { time: "17:00", title: "Final Pitch", desc: "各チーム5分間のプレゼンテーションとデモを実施。審査員による質疑応答が行われます。" },
+          { time: "19:00", title: "Award & Closing", desc: "厳正な審査の結果発表、表彰式、そして全体でのクロージングと記念撮影を行います。" }
+        ],
+        tips: [
+          { text: "ピッチ資料作成\nテンプレートと\n過去の優秀作品", type: "PPT", color: "bg-[#bbf7d0]" },
+          { text: "プロトタイピングに役立つ\nIoTモジュール一覧", type: "LINK", color: "bg-[#fef08a]" },
+          { text: "審査基準と\nメンタリングの\nスケジュール", type: "PDF", color: "bg-[#fbcfe8]" }
+        ],
+        teams: [
+          { id: "A", name: "Team Alpha", title: "Smart Helmet Hub : 視界を共有", desc: "AR技術を活用し、サイクリング中の視界情報やナビをヘルメットに投影するシステム。" },
+          { id: "B", name: "Team Beta", title: "Eco-Cycle : 環境貢献度可視化", desc: "自転車移動によるCO2削減量を計算し、地域通貨やポイントに還元するプラットフォーム。" },
+          { id: "C", name: "Team Gamma", title: "Navi-Spoke : 光るスポークナビ", desc: "車輪の回転に合わせてスポークのLEDを制御し、曲がる方向や速度を周囲に知らせるデバイス。" },
+          { id: "D", name: "Team Delta", title: "Share-Ride : 自転車のP2Pシェア", desc: "個人所有の自転車を安全かつ簡単に貸し借りできる、スマートロック連動型のアプリ。" }
+        ]
+      }
+    };
+
+    // --- Initialization ---
+    document.addEventListener('DOMContentLoaded', () => {
+      initRotatingPhotos();
+      setupIntersectionObserver();
+    });
+
+    // --- Background Photos ---
+    function initRotatingPhotos() {
+      const container = document.getElementById('rotatingPhotosContainer');
+      for (let i = 0; i < 6; i++) {
+        const angle = (i * 360) / 6;
+        const translateY = window.innerWidth >= 768 ? '-480px' : '-300px';
+        const randomRot = (i % 2 === 0 ? 1 : -1) * (10 + (i * 2));
+        const imageNum = (i % 3) + 1; // 1, 2, 3 の繰り返し
+        
+        const photoDiv = document.createElement('div');
+        photoDiv.className = 'absolute shadow-md bg-white p-2 pb-6 border border-gray-200';
+        photoDiv.style.cssText = `
+          top: 50%; left: 50%; width: 120px;
+          transform: translate(-50%, -50%) rotate(${angle}deg) translateY(${translateY}) rotate(-${angle}deg) rotate(${randomRot}deg);
+        `;
+        photoDiv.innerHTML = `
+          <div class="absolute -top-3 left-1/2 -translate-x-1/2 w-10 h-4 bg-red-400/50 rotate-3 backdrop-blur-sm shadow-sm"></div>
+          <div class="w-full aspect-square bg-gray-100 overflow-hidden">
+             <img src="./images/image${imageNum}.png" alt="" class="w-full h-full object-cover grayscale sepia-[.3] contrast-125" />
+          </div>
+        `;
+        container.appendChild(photoDiv);
+      }
+    }
+
+    // --- View Navigation & Rendering ---
+    function switchView(viewName) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      document.getElementById('homeView').classList.add('view-hidden');
+      document.getElementById('dayView').classList.add('view-hidden');
+      
+      // Reset animations
+      document.querySelectorAll('.marker-path').forEach(el => el.classList.remove('drawn'));
+      document.querySelectorAll('.fade-in-scroll').forEach(el => el.classList.remove('visible'));
+      const logo = document.querySelector('.logo-sticker');
+      if(logo) logo.classList.remove('visible');
+
+      if (viewName === 'home') {
+        document.getElementById('homeView').classList.remove('view-hidden');
+      } else {
+        renderDayView(viewName);
+        document.getElementById('dayView').classList.remove('view-hidden');
+      }
+      
+      // Re-trigger observer for new elements
+      setTimeout(setupIntersectionObserver, 100);
+    }
+
+    function renderDayView(dayKey) {
+      const data = daysData[dayKey];
+      
+      // Header
+      document.getElementById('dvId').textContent = data.id;
+      document.getElementById('dvId').className = `font-eng text-3xl font-bold ${data.markerColor}`;
+      document.getElementById('dvDate').textContent = data.date;
+      document.getElementById('dvTitle').textContent = data.title;
+      document.getElementById('dvSubtitle').textContent = data.subtitle;
+      document.getElementById('dvUnderline').setAttribute('stroke', data.underlineColor);
+
+      // Timetable
+      const ttContainer = document.getElementById('dvTimetable');
+      // Keep the axis line, remove others
+      Array.from(ttContainer.children).forEach(child => {
+        if (!child.classList.contains('absolute')) ttContainer.removeChild(child);
+      });
+      
+      data.programs.forEach((prog, idx) => {
+        const rotation = idx % 2 === 0 ? "rotate-1" : "-rotate-1";
+        const html = `
+          <div class="fade-in-scroll relative mb-12 last:mb-0">
+            <div class="absolute -left-[4px] md:-left-[4px] top-4 w-6 h-6 bg-[#fdfdfd] flex items-center justify-center z-10">
+              <span class="font-eng text-2xl font-bold ${data.markerColor}">×</span>
+            </div>
+            <div class="pl-10 md:pl-16">
+              <div class="relative bg-white p-5 md:p-8 shadow-[2px_4px_12px_rgba(0,0,0,0.08)] border border-gray-200 ${rotation} hover:-translate-y-1 hover:shadow-[4px_8px_16px_rgba(0,0,0,0.12)] transition-all duration-300" style="border-radius: 2px 4px 3px 2px">
+                <div class="absolute top-2 right-2 w-2 h-2 rounded-full bg-gray-100 shadow-[inset_1px_1px_2px_rgba(0,0,0,0.1)]"></div>
+                <div class="flex flex-col md:flex-row md:items-baseline gap-2 md:gap-4 mb-3">
+                  <span class="font-eng text-3xl font-bold underline decoration-wavy ${data.markerColor} decoration-gray-200">${prog.time}</span>
+                  <h4 class="text-xl md:text-2xl font-bold text-gray-800">${prog.title}</h4>
+                </div>
+                <p class="text-gray-600 leading-relaxed text-base md:text-lg">${prog.desc}</p>
+              </div>
+            </div>
+          </div>
+        `;
+        ttContainer.insertAdjacentHTML('beforeend', html);
+      });
+
+      // Presentations (Day 2)
+      const presSection = document.getElementById('dvPresentationsSection');
+      const presContainer = document.getElementById('dvPresentations');
+      presContainer.innerHTML = '';
+      
+      if (data.teams) {
+        presSection.classList.remove('view-hidden');
+        data.teams.forEach((team, idx) => {
+          const magnetColor = idx % 2 === 0 ? "bg-yellow-400" : "bg-green-400";
+          const rotation = idx % 2 === 0 ? "-rotate-2" : "rotate-1";
+          
+          const teamStr = JSON.stringify(team).replace(/"/g, '&quot;');
+          
+          const html = `
+            <div onclick="openPdfModal(${teamStr})" class="cursor-pointer relative bg-white p-6 shadow-[2px_4px_12px_rgba(0,0,0,0.08)] border border-gray-200 ${rotation} hover:-translate-y-1 hover:shadow-[4px_8px_16px_rgba(0,0,0,0.12)] transition-all duration-300 h-full flex flex-col group" style="border-radius: 2px 4px 3px 2px">
+              <div class="absolute -top-3 left-1/2 -translate-x-1/2 w-6 h-6 rounded-full shadow-[1px_2px_3px_rgba(0,0,0,0.2)] ${magnetColor} border-2 border-white z-10 flex items-center justify-center">
+                 <div class="w-1.5 h-1.5 rounded-full bg-white opacity-40 absolute top-1 left-1"></div>
+              </div>
+              <div class="flex items-center justify-between mb-4">
+                <span class="font-eng text-2xl font-bold text-gray-500">Team ${team.id}</span>
+                <span class="font-eng text-xl text-blue-500 group-hover:underline">PDF →</span>
+              </div>
+              <h4 class="text-lg font-bold text-gray-900 mb-3 border-b-2 border-dotted border-gray-300 pb-2">${team.title}</h4>
+              <p class="text-sm md:text-base text-gray-600 leading-relaxed mt-auto">${team.desc}</p>
+            </div>
+          `;
+          presContainer.insertAdjacentHTML('beforeend', html);
+        });
+      } else {
+        presSection.classList.add('view-hidden');
+      }
+
+      // Tips
+      const tipsContainer = document.getElementById('dvTips');
+      tipsContainer.innerHTML = '';
+      data.tips.forEach((tip, idx) => {
+        const rotation = idx % 2 === 0 ? (idx === 0 ? -3 : 4) : -2;
+        const delay = idx * 150;
+        const html = `
+          <div class="fade-in-scroll" style="transition-delay: ${delay}ms">
+            <a href="#" onclick="event.preventDefault()" class="group relative w-40 h-40 md:w-52 md:h-52 p-4 md:p-5 shadow-md hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 ${tip.color} flex flex-col justify-between" style="transform: rotate(${rotation}deg); box-shadow: 2px 4px 10px rgba(0,0,0,0.1), inset 0 -4px 6px rgba(0,0,0,0.04); border-radius: 2px 255px 3px 255px / 255px 5px 225px 3px">
+              <div class="absolute bottom-0 right-0 w-8 h-8 bg-black opacity-5 rounded-tl-full transition-transform group-hover:scale-110"></div>
+              <p class="font-bold text-gray-800 text-sm md:text-base leading-relaxed whitespace-pre-wrap z-10 relative mt-2">${tip.text}</p>
+              <div class="flex justify-end items-end z-10 relative mt-auto">
+                <span class="font-eng text-lg text-gray-500 group-hover:text-gray-900 transition-colors">${tip.type} <span class="text-xl">↗</span></span>
+              </div>
+            </a>
+          </div>
+        `;
+        tipsContainer.insertAdjacentHTML('beforeend', html);
+      });
+    }
+
+    // --- Modals ---
+    function openModal(modalId) {
+      document.getElementById(modalId).classList.remove('view-hidden');
+    }
+
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.add('view-hidden');
+    }
+
+    function openPdfModal(teamData) {
+      document.getElementById('pdfModalTeamId').textContent = `Team ${teamData.id}`;
+      document.getElementById('pdfModalTeamTitle').textContent = teamData.title;
+      document.getElementById('pdfModalTeamName').textContent = `${teamData.name} - プレゼン資料`;
+      openModal('pdfModal');
+    }
+
+    // --- Scroll Animations (Intersection Observer) ---
+    function setupIntersectionObserver() {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            if (entry.target.classList.contains('marker-path')) {
+              entry.target.classList.add('drawn');
+            }
+            if (entry.target.classList.contains('fade-in-scroll') || entry.target.classList.contains('logo-sticker')) {
+              entry.target.classList.add('visible');
+            }
+          }
+        });
+      }, { threshold: 0.1 });
+
+      document.querySelectorAll('.marker-path, .fade-in-scroll, .logo-sticker').forEach(el => {
+        observer.observe(el);
+      });
+    }
+  </script>
+</body>
+</html>
